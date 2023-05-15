@@ -1,0 +1,20 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      python: 3.8
+  pre_build:
+    commands:
+      - echo "Logging in to Amazon ECR..."
+      - aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin 725734132692.dkr.ecr.ap-south-1.amazonaws.com/demo
+  build:
+    commands:
+      - echo "Building Docker image..."
+      - docker build -t demo .
+      - docker tag demo:latest 725734132692.dkr.ecr.ap-south-1.amazonaws.com/demo:latest
+      - docker push 725734132692.dkr.ecr.ap-south-1.amazonaws.com/demo:latest
+  post_build:
+    commands:
+      - echo "Build completed successfully!"
+#       - aws s3 sync ./public s3://your-bucket-name --delete
